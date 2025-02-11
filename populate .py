@@ -1,15 +1,14 @@
-
 import os
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_ollama import OllamaEmbeddings
 from langchain_chroma import Chroma
 import cv2
+import ollama
 
 def extract_text_from_images(folder_path):
     """
     Extract text from all images in the specified folder using EasyOCR.
     """
-    
     extracted_texts = {}
 
     if not os.path.exists(folder_path):
@@ -25,22 +24,38 @@ def extract_text_from_images(folder_path):
             print(f"Processing: {file_name}")
             try:
 
+               
                 response = ollama.chat(
                     model='llama3.2-vision',
                     messages=[{
                         'role': 'user',
                         'content': """ 
-                            This is a real invoice for some purchase. Extract the content in the given image. 
+                            This is a real invoice for some purchase. 
+                            Extract the content in the given image. 
                             The invoice will have tables. Make sure tables are extracted as it is including all the columns and values/empty cells.
                             Preserve empty columns as it is. Do not remove or adjust them.
-                            There may be size wise billing such as S, M, L, XL etc... They should be preserved as they are.
-                            Make sure they are extracted correctly.
+                            
+                            Give response in format:
+                            Company Name:
+                            Address:
+                            Phone number:
+                            Invoice Number:
+                            Invoice No:
+                            Billing Date:
+                            Bill To:
+
+                            **Tables**
+
+                            Sub Total:
+                            Tax Rate: 
+                            Total:
                         """,
                         'images': [file_path]
                     }]
                 )
 
-                return response['message']['content']
+                print(response)
+                extracted_texts[file_name] = response['message']['content']
 
             except Exception as e:
                 print(f"Error processing {file_name}: {e}")

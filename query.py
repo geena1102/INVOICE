@@ -1,6 +1,6 @@
 from langchain_ollama import OllamaEmbeddings
 from langchain.prompts import ChatPromptTemplate
-from langchain_chroma import Chroma  
+from langchain_chroma import Chroma  # Updated import
 from langchain_ollama import OllamaLLM
 
 CHROMA_DB_PATH = "chroma_storage"
@@ -9,6 +9,8 @@ PROMPT_TEMPLATE = """
 Answer the question based only on the following context:
 
 {context}
+
+
 
 
 ---
